@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, hieght=device-height, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+
+
+ <!--  -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- JS内容 -->
+  <script>
+    //ページ初期化
+    document.addEventListener('init', function(event) {
+      var page = event.target;
+
+      if (page.matches('#top-page')) {    //TOPの時
+
+        page.querySelector('#push-button').onclick = function() {
+          document.querySelector('#navigator').pushPage('home.html');
+        };
+
+      } else if (page.matches('#home-page')) {    //ホームにいるとき
+
+
+        //メモボタンが押された時の処理
+        page.querySelector('#note-button').onclick = function() {
+          document.querySelector('#navigator').pushPage('note.html');
+        };
+
+
+        //期限一覧が押された時の処理
+        page.querySelector('#list-button').onclick = function() {
+          document.querySelector('#navigator').pushPage('list.html');
+          saveMemoList(list);
+        };
+      
+    
+      }else if (page.matches('#note-page')){ //
+        page.querySelector('#note-up-button').onclick = function() {
+          document.querySelector('#navigator').pushPage('note-up.html');
+        };
+        page.querySelector('#delete-button').onclick = function() {
+          deleteMemo(id);
+          document.querySelector('#navigator').pushPage('note.html');
+        };
+      }else if (page.matches('#note-up-page')){
+        page.querySelector('#SaveBtn').onclick = function() {
+
+          onSaveBtn(); //  リスト保存処理処理のよびだし
+          document.querySelector('#navigator').pushPage('note.html');
+          
+        };
+      }
+    });
+
+    if (ons.platform.isIPhoneX()) {
+      document.documentElement.setAttribute('onsflag-iphonex-portrait', '');
+      document.documentElement.setAttribute('onsflag-iphonex-landscape', '');
+    }
+
+  
+  </script>
+</head>
+
+
+
+
+<!-- body内容 -->
+<body>
+  <ons-navigator id="navigator" page="top.html"></ons-navigator>
+
+
+
+  <!-- topの内容 -->
+  <ons-template id="top.html">
+    <ons-page id="top-page">
+      <ons-toolbar>
+        <div class="center">TOP</div>
+      </ons-toolbar>
+
+      <div class="content" style="text-align: center">
+        <!-- topの内容 -->
+        <p></p>
+        <ons-button id="push-button"><img src="img/rabbit.png"  width="98%" height="98%"></ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+
+
+
+  <!-- homeの内容 -->
+  <ons-template id="home.html">
+    <ons-page id="home-page">
+      <ons-toolbar>
+          <div class="left"><ons-back-button></ons-back-button></div>
+          <div class="center">Home</div>
+        </ons-toolbar>
+
+      <div class="content" style="text-align: center">
+
+        <!-- 期限一覧 -->
+        <ons-button id="note-button" style="position: absolute; left: 70px; bottom: 50px">期限一覧</ons-button>
+
+        <!-- メモ -->
+        <ons-button id="list-button" style="position: absolute; right: 70px; bottom: 50px">　メモ　</ons-button>
+
+         <iframe src="https://script.google.com/macros/s/AKfycbwtHggRWF1uaIg9DpvN2_Mqnu3WIJjjHDWLiLA/exec" width="100%" height="100%" ></iframe> 
+        
+
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!-- 期限一覧の内容 -->
+  <ons-template id="note.html">
+      <ons-page id="note-page">
+        <ons-toolbar>
+          <div class="left"><ons-back-button></ons-back-button></div>
+          <div class="center">期限一覧</div>
+          <!-- 追加ボタン -->
+          <div class="right">
+              <ons-toolbar-button >
+                
+              <a id="note-up-button" >add <i class="fas fa-plus-circle"></i></a>
+              </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+    <div class="center" style="text-align: center">
+      <br><br><br><br>
+
+      <div class="right">
+          <a id='TopListView'></a>
+      </div>
+
+
+
+
+
+    </div>
+    </ons-page>
+  </ons-template>
+
+  <!-- メモの内容 -->
+  <ons-template id="list.html">
+    <ons-page id="liset-page">
+      <ons-toolbar>
+          <div class="left"><ons-back-button></ons-back-button></div>
+          <div class="center">メモ</div>
+      </ons-toolbar>
+
+      <div class="content" style="text-align: center">
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!--  /// メモ追加ページ  /// -->
+    <ons-template id="note-up.html">
+    <ons-page id="note-up-page">
+      <ons-toolbar>
+          <div class="left"><ons-back-button></ons-back-button></div>
+          <div class="center">memo</div>
+      </ons-toolbar>
+
+      <div class="content" style="text-align: center">
+        <section data-role="content" style="position: absolute; left: 10%; top: 50%">
+            <textarea id="Memo" rows="4" cols="40" ></textarea>
+            <font size="5">
+            <a data-role="button" data-icon="check" id="SaveBtn">Save</a>
+            </font>
+        </section>
+      </div>
+    </ons-page>
+  </ons-template>
+
+   <!--  ///    /// -->
+
+
+  <!-- メモのｊｓ -->
+  <!-- <script src="components/loader.js"></script> -->
+  <script src="js/memo.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/cssua.min.js"></script>
+
+</body>
+</html>
